@@ -232,6 +232,7 @@ class DbSync:
         # setup a catalog name
         if self.connection_config.get("database"):
             self.catalog_name = self.connection_config.get("database")
+            self.create_database_if_not_exists()
         elif self.connection_config.get("dbname"):
             self.catalog_name = self.connection_config.get("dbname")
         else:
@@ -301,6 +302,13 @@ class DbSync:
             # Delimiters/quotechars for CSV temp files
             self.delimiter = self.connection_config.get("delimiter", ",")
             self.quotechar = self.connection_config.get("quotechar", '"')
+
+    def create_database_if_not_exists(self):
+        query = f"CREATE DATABASE IF NOT EXISTS {self.catalog_name}"
+        self.logger.info(
+            f"Creating database {self.catalog_name}... {query}"
+        )
+        self.query(query)
 
     def query(self, query, params=None):
         self.logger.debug("Running query: %s", query)

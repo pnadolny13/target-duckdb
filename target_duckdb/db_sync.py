@@ -304,11 +304,14 @@ class DbSync:
             self.quotechar = self.connection_config.get("quotechar", '"')
 
     def create_database_if_not_exists(self):
-        query = f"CREATE DATABASE IF NOT EXISTS {self.catalog_name}"
-        self.logger.info(
-            f"Creating database {self.catalog_name}... {query}"
-        )
-        self.query(query)
+        try:
+            query = f"CREATE DATABASE IF NOT EXISTS {self.catalog_name}"
+            self.logger.info(
+                f"Creating database {self.catalog_name}... {query}"
+            )
+            self.query(query)
+        except:
+            pass
 
     def query(self, query, params=None):
         self.logger.debug("Running query: %s", query)

@@ -663,6 +663,6 @@ class DbSync:
                     REGION 'us-east-1'
                 );
 
-                COPY {full_table_name} TO 's3://flect-data-processing-service/raw/{table_name}/{s3_export_config.get('partition')}/{current_date}/{table_name}.parquet';
+                COPY {full_table_name} TO 's3://{s3_export_config.get('bucket_prefix')}/{table_name}/{s3_export_config.get('partition')}/{current_date}/{table_name}.parquet';
             """
             self.query(query)

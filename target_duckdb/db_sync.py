@@ -7,6 +7,7 @@ import re
 import time
 import uuid
 from urllib.parse import urlparse
+from datetime import datetime
 
 from target_duckdb.logger import get_logger
 
@@ -644,3 +645,24 @@ class DbSync:
         else:
             self.logger.info("Table '%s' exists", table_name)
             self.update_columns()
+
+    def export(self, stream):
+        s3_export_config = self.connection_config.get("s3_export")
+        if s3_export_config:
+            full_table_name = self.table_name(stream)
+            table_name = full_table_name.split(".")[-1].replace('"', "")
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            query = f"""
+                INSTALL httpfs;
+                LOAD httpfs;
+
+                CREATE SECRET if not exists (
+                    TYPE S3,
+                    KEY_ID '{s3_export_config.get('aws_key')}',
+                    SECRET '{s3_export_config.get('aws_secret')}',
+                    REGION 'us-east-1'
+                );
+
+                COPY {full_table_name} TO 's3://flect-data-processing-service/raw/{table_name}/{s3_export_config.get('partition')}/{current_date}/{table_name}.parquet';
+            """
+            self.query(query)

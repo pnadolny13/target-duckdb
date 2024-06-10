@@ -394,10 +394,11 @@ def load_stream_batch(
     # NOTE(jwills): taking index creation out for now as it causes more headaches than it's
     # worth for DuckDB; see https://github.com/duckdb/duckdb/issues/3265
     # db_sync.create_indices(stream)
-
+    db_sync.export(stream)
     # Delete soft-deleted, flagged rows - where _sdc_deleted at is not null
     if delete_rows:
         db_sync.delete_rows(stream)
+    
 
     # reset row count for the current stream
     row_count[stream] = 0

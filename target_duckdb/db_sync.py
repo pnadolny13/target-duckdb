@@ -651,7 +651,7 @@ class DbSync:
         if s3_export_config:
             full_table_name = self.table_name(stream)
             table_name = full_table_name.split(".")[-1].replace('"', "")
-            current_date = datetime.now().strftime('%Y-%m-%d')
+            current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             query = f"""
                 INSTALL httpfs;
                 LOAD httpfs;

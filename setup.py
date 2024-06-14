@@ -20,7 +20,7 @@ setup(
     py_modules=["target_duckdb"],
     install_requires=[
         "jsonschema>=3.2.0",
-        "duckdb==1.0.0",
+        "duckdb==0.10.3",
     ],
     extras_require={
         "test": [

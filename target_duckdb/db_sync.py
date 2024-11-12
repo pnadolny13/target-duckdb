@@ -651,7 +651,10 @@ class DbSync:
         if s3_export_config:
             full_table_name = self.table_name(stream)
             table_name = full_table_name.split(".")[-1].replace('"', "")
-            current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            date_partition = ""
+            if s3_export_config.get("include_date_partition", True):
+                current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                date_partition = f"{current_date}/"
             query = f"""
                 INSTALL httpfs;
                 LOAD httpfs;
@@ -663,6 +666,6 @@ class DbSync:
                     REGION 'us-east-1'
                 );
 
-                COPY {full_table_name} TO 's3://{s3_export_config.get('bucket_prefix')}/{table_name}/{s3_export_config.get('partition')}/{current_date}/{table_name}.parquet';
+                COPY {full_table_name} TO 's3://{s3_export_config.get('bucket_prefix')}/{table_name}/{s3_export_config.get('partition')}/{date_partition}{table_name}.parquet';
             """
             self.query(query)
